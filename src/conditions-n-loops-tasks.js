@@ -236,12 +236,17 @@ function getIndexOf(str, letter) {
  *  12345, 0    => false
  *  12345, 6    => false
  */
-function isContainNumber(/* num, digit */) {
-  throw new Error('Not implemented');
+function isContainNumber(num, digit) {
+  let subNum = num;
+  while (subNum > 0) {
+    if (subNum % 10 === digit) return true;
+    subNum = Math.floor(subNum / 10);
+  }
+  return false;
 }
 
 /**
- * Finds the index of an element in an array where the sum of elements to the left equals the sum of elements to the right.
+ * Finds the index of an element in an array where the sum of elements to the l equals the sum of elements to the r.
  * If such an index does not return -1.
  * In this task, the use of methods of the Array and String classes is not allowed.
  *
@@ -253,8 +258,18 @@ function isContainNumber(/* num, digit */) {
  *  [2, 3, 9, 5] => 2       => 2 + 3 === 5 then balance element is 9 and its index = 2
  *  [1, 2, 3, 4, 5] => -1   => no balance element
  */
-function getBalanceIndex(/* arr */) {
-  throw new Error('Not implemented');
+function getBalanceIndex(arr) {
+  const arrLen = arr.length;
+  let sumOfArr = 0;
+  for (let i = 0; i < arrLen; i += 1) sumOfArr += arr[i];
+
+  let curSum = 0;
+  for (let i = 1; i < arrLen - 1; i += 1) {
+    curSum += arr[i - 1];
+    if (curSum === sumOfArr - curSum - arr[i]) return i;
+  }
+
+  return -1;
 }
 
 /**
@@ -278,8 +293,45 @@ function getBalanceIndex(/* arr */) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
+function getSpiralMatrix(size) {
+  let matrix = [];
+
+  while (matrix.length < size) {
+    matrix = [...matrix, [...new Array(size)]];
+  }
+
+  let r = size - 1;
+  let b = size - 1;
+  let t = 0;
+  let l = 0;
+  let num = 1;
+
+  while (num <= size * size) {
+    for (let i = l; i <= r; i += 1) {
+      matrix[t][i] = num;
+      num += 1;
+    }
+    t += 1;
+
+    for (let i = t; i <= b; i += 1) {
+      matrix[i][r] = num;
+      num += 1;
+    }
+    r -= 1;
+
+    for (let i = r; i >= l; i -= 1) {
+      matrix[b][i] = num;
+      num += 1;
+    }
+    b -= 1;
+
+    for (let i = b; i >= t; i -= 1) {
+      matrix[i][l] = num;
+      num += 1;
+    }
+    l += 1;
+  }
+  return matrix;
 }
 
 /**
@@ -297,8 +349,19 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const n = matrix.length;
+  const m = [...matrix];
+
+  for (let i = 0; i < n; i += 1) {
+    for (let j = i + 1; j < n; j += 1) {
+      [m[i][j], m[j][i]] = [m[j][i], m[i][j]];
+    }
+    for (let k = 0; k < n / 2; k += 1) {
+      [m[i][k], m[i][n - k - 1]] = [m[i][n - k - 1], m[i][k]];
+    }
+  }
+  return m;
 }
 
 /**
@@ -315,8 +378,35 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+  const current = arr[0];
+  const result = arr;
+  let leftHalf = [];
+  let rightHalf = [];
+  let leftIndex = 0;
+  let rightIndex = 0;
+  for (let i = 1; i <= arr.length - 1; i += 1) {
+    if (arr[i] < current) {
+      leftHalf[leftIndex] = arr[i];
+      leftIndex += 1;
+    } else {
+      rightHalf[rightIndex] = arr[i];
+      rightIndex += 1;
+    }
+  }
+  leftHalf = sortByAsc(leftHalf);
+  rightHalf = sortByAsc(rightHalf);
+  for (let i = 0; i < leftIndex; i += 1) {
+    result[i] = leftHalf[i];
+  }
+  result[leftIndex] = current;
+  for (let i = 0; i < rightIndex; i += 1) {
+    result[leftIndex + 1 + i] = rightHalf[i];
+  }
+  return result;
 }
 
 /**
@@ -336,8 +426,30 @@ function sortByAsc(/* arr */) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  let resStr = str;
+  const results = [resStr];
+
+  for (let iteration = 1; iteration <= iterations; iteration += 1) {
+    let oddChars = '';
+    let evenChars = '';
+
+    for (let i = 0; i < resStr.length; i += 1) {
+      if (i % 2 === 0) {
+        evenChars += resStr[i];
+      } else {
+        oddChars += resStr[i];
+      }
+    }
+
+    resStr = evenChars + oddChars;
+    results[iteration] = resStr;
+    if (resStr === str) {
+      return results[iterations % iteration];
+    }
+  }
+
+  return resStr;
 }
 
 /**
@@ -357,8 +469,49 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const digits = [];
+  let tempNumber = number;
+
+  while (tempNumber > 0) {
+    digits.unshift(tempNumber % 10);
+    tempNumber = Math.floor(tempNumber / 10);
+  }
+
+  let i = digits.length - 2;
+  while (i >= 0 && digits[i] >= digits[i + 1]) {
+    i -= 1;
+  }
+
+  if (i === -1) {
+    return number;
+  }
+
+  let j = digits.length - 1;
+  while (digits[j] <= digits[i]) {
+    j -= 1;
+  }
+
+  const temp = digits[i];
+  digits[i] = digits[j];
+  digits[j] = temp;
+
+  let start = i + 1;
+  let end = digits.length - 1;
+  while (start < end) {
+    const temp2 = digits[start];
+    digits[start] = digits[end];
+    digits[end] = temp2;
+    start += 1;
+    end -= 1;
+  }
+
+  let result = 0;
+  for (let k = 0; k < digits.length; k += 1) {
+    result = result * 10 + digits[k];
+  }
+
+  return result;
 }
 
 module.exports = {
